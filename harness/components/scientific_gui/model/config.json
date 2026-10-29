@@ -1,0 +1,7 @@
+{
+  "adapter": "chat_completions",
+  "endpoint": "http://127.0.0.1:8000/v1/chat/completions",
+  "model": "SET_MODEL_NAME",
+  "api_key_env": "MODEL_API_KEY",
+  "parameters": {}
+}

@@ -1,0 +1,10 @@
+# Add this override when the existing controller publishes only to localhost.
+services:
+  gui-mcp:
+    environment:
+      SCIENTIFIC_GUI_CONTROLLER_URL: http://controller:8090
+    networks: [control]
+networks:
+  control:
+    external: true
+    name: ${SCIENTIFIC_GUI_CONTROL_NETWORK:?Set the existing trusted controller network}

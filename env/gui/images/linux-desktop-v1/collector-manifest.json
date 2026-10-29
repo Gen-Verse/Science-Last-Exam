@@ -1,0 +1,9 @@
+{
+  "protocol": "scientific-collector-probe-v1",
+  "version": "0.7",
+  "files": {
+    "__init__.py": "7a58ff0bc534871e61ed0432311021b42a58c9585eec6e9238c1e700567ac6f7",
+    "cmds.py": "dbb20c797a3c1ae8a9f5db6f343c80f52e3c785d57a6c381bdbed377db8385e2",
+    "scientific.py": "9e1f374fab5534cabe05706d02194b0a210832d4f0a304365155ff64baf6a588"
+  }
+}

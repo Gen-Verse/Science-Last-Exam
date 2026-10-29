@@ -1,0 +1,17 @@
+# Add this override only on hosts that expose a usable /dev/kvm.
+services:
+  controller:
+    devices:
+      - /dev/kvm:/dev/kvm
+    environment:
+      SCIENTIFIC_GUI_ACCELERATOR: kvm
+  bench:
+    devices:
+      - /dev/kvm:/dev/kvm
+    environment:
+      SCIENTIFIC_GUI_ACCELERATOR: kvm
+  prepare:
+    devices:
+      - /dev/kvm:/dev/kvm
+    environment:
+      SCIENTIFIC_GUI_ACCELERATOR: kvm

@@ -1,0 +1,9 @@
+{
+  "check": "wind-focused-transport",
+  "profile": "eprem",
+  "ranks": 2,
+  "threads": 1,
+  "outputs": [
+    "transport.npz"
+  ]
+}

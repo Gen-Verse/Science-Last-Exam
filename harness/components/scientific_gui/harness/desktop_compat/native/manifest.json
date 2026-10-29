@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "runtime_version": "6.9.3",
+  "build_headers": "6.2.4; public Qt 6 API only; compiled against actual bundled Qt 6.9.3 libraries",
+  "binary_sha256": "43bdb7edee0e9b4f339f524e40f4228ad63df1d9838d1e6de58733e007914590",
+  "source_sha256": "5cd94560ff981cb75d569fe5047be6be21c181f83d521e44c3012513e6bb2c1e",
+  "runtime_libraries": {
+    "libQt6DBus.so.6": "6160b5947bf0cf1b79d5ac1b13ae17ff94fbaabbf874ed6390ca15df2f94553d",
+    "libQt6Widgets.so.6": "56d893ea7c733159e7701ee8c2687e5bb9d9abb952b838ef122b13abc1b96a13",
+    "libQt6Network.so.6": "5d01da4dcc7482003d022cc5cb0d682cca48c1c58a392a537511f78bcff0204d",
+    "libQt6Core5Compat.so.6": "1e9870e9bbd430cbdf6ed3c5c9dcf281b773716b5a69426d067cdd68578d5036",
+    "libQt6XcbQpa.so.6": "fd6db8510ecee0c8a0a9c0a609785cabd1bfe2278879b2f8f170205485f74a05",
+    "libQt6Concurrent.so.6": "936bd34ace07671cd334570634cecb251ebf45106c3e57f57b33df1a4d7881bf",
+    "libQt6PrintSupport.so.6": "5385cd13ade9bc9aa874d92f0f20dab02f3a0193f1c9301258ab45ed49bd6cce",
+    "libQt6Xml.so.6": "b45d4339010cb05697227fe97ca96d72f1db59f892a9d49a871a21af3a443061",
+    "libQt6Gui.so.6": "b6cc17c06afd1b7ae730c4db981255614da8db29273d77df36b51de660645d89",
+    "libQt6DataVisualization.so.6": "e1fb01f9d950b316c98cd847b4ff3f7810195c7efa033d31725abbc338de6198",
+    "libQt6Core.so.6": "b24bec505b4ae3f90913e8e6f97ba9d826cbc5e3ce2cc73e7eff86562d795e2b",
+    "libQt6Svg.so.6": "d49d4897beb678fddc7ad699e8d49ce4c93ade2112edaa878b5f4691255ad649",
+    "libQt6OpenGL.so.6": "3ef1b59084ab0e16c204acf987425fac4357c817d0ae43d4d0ce8cb980a906fc"
+  },
+  "read_only": true
+}

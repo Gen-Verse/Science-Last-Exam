@@ -1,0 +1,13 @@
+{
+  "adapter": "chat_completions",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "model": "deepseek-flash",
+  "api_key_env": "DEEPSEEK_API_KEY",
+  "parameters": {
+    "thinking": {
+      "type": "disabled"
+    },
+    "temperature": 0.1,
+    "max_tokens": 512
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "iso": {
+    "source": "/materials/windows11.iso",
+    "sha256": ""
+  },
+  "windows_image_name": "Windows 11 Pro",
+  "assets": {
+    "python": {
+      "filename": "python-3.12.10-amd64.exe",
+      "version": "3.12.10",
+      "source": "https://www.python.org/ftp/python/3.12.10/python-3.12.10-amd64.exe",
+      "sha256": ""
+    },
+    "vesta": {
+      "filename": "vesta-3.90.1.zip",
+      "version": "3.90.1",
+      "source": "/materials/vesta-3.90.1.zip",
+      "sha256": "",
+      "expected_path": "C:\\Users\\Docker\\Desktop\\Setup\\VESTA-win64\\VESTA-win64\\VESTA.exe",
+      "version_prefix": "3.90.1"
+    },
+    "digitalmicrograph": {
+      "filename": "digitalmicrograph-installer.exe",
+      "version": "3.5",
+      "source": "/materials/digitalmicrograph-installer.exe",
+      "sha256": "",
+      "arguments": [],
+      "expected_path": "C:\\Program Files (x86)\\Gatan\\DigitalMicrograph\\DigitalMicrograph.exe",
+      "version_prefix": "3.5"
+    }
+  }
+}

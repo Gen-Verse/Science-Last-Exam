@@ -1,0 +1,9 @@
+{
+  "harbor_version": "0.24.0",
+  "source": "Local Docker bridge compatibility files; preserved verbatim",
+  "files": {
+    "docker.py": "5654750291468ef7deb353802b743d1c6df0f076a32c745c8f6fb4fbbe60ffcb",
+    "docker_unix.py": "56f1655b29ad222c315b2ea3c6d4172d6fdcd4a3788697eb9d3f80d1264b3152",
+    "runtime.py": "5204be310120efaf790aed2b485dd0f150e947d36464122c8f5d2ac259e3f7a8"
+  }
+}

@@ -1,0 +1,26 @@
+# Visual Studio Code json                                                       
+.vs*
+.DS_Store
+
+# wmake compilation folders
+linux*
+platforms
+
+# dynamicCode directories
+dynamicCode
+
+# any mesh
+polyMesh*
+
+# Any processor directories
+processor* 
+
+# Any data that isn't the 0 directory
+0.* 
+[1-9]*
+
+# log files
+log*
+
+# bash history
+*.bash_history

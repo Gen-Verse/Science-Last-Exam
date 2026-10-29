@@ -1,0 +1,13 @@
+ChimeraX SessionStates 0.5
+Author: Ichinoe <shiinahiiragi@outlook.com>
+Source: https://github.com/ShiinaHiiragi/chimerax-states
+Revision: fcae50622838a219d0c49d7765f7f5d5e4fe2968
+The package declares License :: Freeware in bundle_info.xml.
+Modified: project description only.
+
+GRASS GUI state hooks
+Source: https://github.com/ShiinaHiiragi/grass-gui
+Revision: 4fe031217483301519798b07f83f7f53c5142b09
+Original file copyright notices remain in the bundled source archive.
+Modified: HTTP listener bound to loopback; explicit integer port.
+See gis-gpl.txt for the GNU General Public License.

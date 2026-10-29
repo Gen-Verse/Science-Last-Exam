@@ -1,0 +1,176 @@
+--- a/desktop_env/controllers/setup.py
++++ b/desktop_env/controllers/setup.py
+@@ -21,7 +21,10 @@
+ from requests_toolbelt.multipart.encoder import MultipartEncoder
+ 
+ from desktop_env.controllers.python import PythonController
+-from desktop_env.evaluators.metrics.utils import compare_urls
++def compare_urls(*args, **kwargs):
++    # Browser evaluator dependency is unnecessary for COPASI setup.
++    from desktop_env.evaluators.metrics.utils import compare_urls as impl
++    return impl(*args, **kwargs)
+ from desktop_env.providers.aws.proxy_pool import get_global_proxy_pool, init_proxy_pool, ProxyInfo
+ 
+ import dotenv
+--- a/desktop_env/desktop_env.py
++++ b/desktop_env/desktop_env.py
+@@ -13,7 +13,7 @@
+ 
+ from desktop_env.controllers.python import PythonController
+ from desktop_env.controllers.setup import SetupController
+-from desktop_env.evaluators import metrics, getters
++# COPASI extension loads official evaluator modules only if requested.
+ from desktop_env.providers import create_vm_manager_and_provider
+ 
+ logger = logging.getLogger("desktopenv.env")
+@@ -367,6 +367,7 @@
+         self._set_evaluator_info(task_config)
+ 
+     def _set_evaluator_info(self, task_config: Dict[str, Any]):
++        from desktop_env.evaluators import metrics, getters
+         """Set evaluator information from task config"""
+         # evaluator dict
+         # func -> metric function string, or list of metric function strings
+--- a/desktop_env/providers/vmware/provider.py
++++ b/desktop_env/providers/vmware/provider.py
+@@ -29,60 +29,93 @@
+ 
+ class VMwareProvider(Provider):
+     @staticmethod
+-    def _execute_command(command: list, return_output=False):
+-        process = subprocess.Popen(
+-            command,
+-            stdout=subprocess.PIPE,
+-            stderr=subprocess.PIPE,
+-            text=True,
+-            encoding="utf-8"
+-        )
++    def _execute_command(command: list, return_output=False, timeout_seconds=None):
++        # COPASI extension: explicit binary, checked completion, bounded lifetime.
++        import json
++        command = list(command)
++        if os.path.basename(command[0]).lower() in ('vmrun', 'vmrun.exe'):
++            command[0] = os.environ.get('OSWORLD_VMRUN_PATH', 'vmrun')
++        is_ip = 'getGuestIPAddress' in command
++        started_ns = time.time_ns()
++        def record(code, stdout, stderr, error=None):
++            trace = os.environ.get('COPASI_VM_IP_TRACE')
++            if not is_ip or not trace:
++                return
++            def raw(value):
++                data = value if isinstance(value, bytes) else str(value or '').encode('utf-8')
++                return {'hex': data[:8192].hex(), 'utf8_repr': repr(data.decode('utf-8', errors='replace'))[:8192]}
++            row = {'started_ns': started_ns, 'ended_ns': time.time_ns(), 'pid': os.getpid(),
++                   'argv': command, 'returncode': code, 'stdout': raw(stdout), 'stderr': raw(stderr), 'error': error}
++            os.makedirs(os.path.dirname(os.path.abspath(trace)), exist_ok=True)
++            with open(trace, 'a', encoding='utf-8') as stream:
++                stream.write(json.dumps(row, ensure_ascii=False) + '\n')
++        try:
++            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
++                                    timeout=timeout_seconds if timeout_seconds is not None else (15 if is_ip else 120), check=True)
++        except subprocess.CalledProcessError as exc:
++            record(exc.returncode, exc.stdout, exc.stderr, type(exc).__name__)
++            raise
++        except subprocess.TimeoutExpired as exc:
++            record(None, exc.stdout, exc.stderr, type(exc).__name__)
++            raise
++        record(result.returncode, result.stdout, result.stderr)
++        text = result.stdout.decode('utf-8-sig', errors='replace') if isinstance(result.stdout, bytes) else result.stdout
++        return text.strip() if return_output else None
+ 
+-        if return_output:
+-            output = process.communicate()[0].strip()
+-            return output
+-        else:
+-            return None
+ 
+     def start_emulator(self, path_to_vm: str, headless: bool, os_type: str):
+-        print("Starting VMware VM...")
+-        logger.info("Starting VMware VM...")
++        normalized = os.path.normcase(os.path.abspath(path_to_vm))
++        def listed():
++            output = self._execute_command(["vmrun"] + get_vmrun_type(True) + ["list"], True)
++            return any(os.path.normcase(os.path.abspath(line)) == normalized
++                       for line in output.splitlines()[1:])
++        if listed():
++            return
++        command = ["vmrun"] + get_vmrun_type(True) + ["start", path_to_vm]
++        if headless:
++            command.append("nogui")
++        # Do not repeat a start command after an ambiguous timeout.
++        self._execute_command(command)
++        deadline = time.monotonic() + 60
++        while time.monotonic() < deadline:
++            if listed():
++                return
++            time.sleep(2)
++        raise TimeoutError("VM start not confirmed in the bounded vmrun list check")
+ 
+-        while True:
+-            try:
+-                output = subprocess.check_output(f"vmrun {get_vmrun_type()} list", shell=True, stderr=subprocess.STDOUT)
+-                output = output.decode()
+-                output = output.splitlines()
+-                normalized_path_to_vm = os.path.abspath(os.path.normpath(path_to_vm))
+-
+-                if any(os.path.abspath(os.path.normpath(line)) == normalized_path_to_vm for line in output):
+-                    logger.info("VM is running.")
+-                    break
+-                else:
+-                    logger.info("Starting VM...")
+-                    _command = ["vmrun"] + get_vmrun_type(return_list=True) + ["start", path_to_vm]
+-                    if headless:
+-                        _command.append("nogui")
+-                    VMwareProvider._execute_command(_command)
+-                    time.sleep(WAIT_TIME)
+-
+-            except subprocess.CalledProcessError as e:
+-                logger.error(f"Error executing command: {e.output.decode().strip()}")
+ 
+     def get_ip_address(self, path_to_vm: str) -> str:
+-        logger.info("Getting VMware VM IP address...")
+-        while True:
++        import ipaddress
++        # Tools and DHCP were ready in about 20 s in the first boot. Keep the
++        # original 120 s bound and diagnose outputs rather than extending it.
++        deadline = time.monotonic() + 120
++        attempts = 0
++        while (remaining := deadline - time.monotonic()) > 0:
++            attempts += 1
+             try:
+-                output = VMwareProvider._execute_command(
+-                    ["vmrun"] + get_vmrun_type(return_list=True) + ["getGuestIPAddress", path_to_vm, "-wait"],
+-                    return_output=True
+-                )
+-                logger.info(f"VMware VM IP address: {output}")
+-                return output
+-            except Exception as e:
+-                logger.error(e)
+-                time.sleep(WAIT_TIME)
+-                logger.info("Retrying to get VMware VM IP address...")
++                value = self._execute_command(["vmrun"] + get_vmrun_type(True)
++                                              + ["getGuestIPAddress", path_to_vm, "-wait"], True,
++                                              timeout_seconds=min(15, remaining))
++                # Accept one complete IP literal line; never infer an address
++                # from DHCP leases, warning prose, or stale neighbor caches.
++                candidates = set()
++                for line in value.splitlines():
++                    try:
++                        address = ipaddress.ip_address(line.strip().lstrip('\ufeff'))
++                        if not address.is_loopback and not address.is_unspecified and not address.is_link_local:
++                            candidates.add(str(address))
++                    except ValueError:
++                        pass
++                if len(candidates) == 1:
++                    return candidates.pop()
++                raise ValueError('No unique guest IP literal in vmrun output: ' + repr(value))
++            except (ValueError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
++                if attempts == 1 or attempts % 10 == 0:
++                    logger.warning("Guest IP attempt %s failed: %r stdout=%r stderr=%r",
++                                   attempts, exc, getattr(exc, 'stdout', None), getattr(exc, 'stderr', None))
++                time.sleep(min(2, max(0, deadline - time.monotonic())))
++        raise TimeoutError("VMware guest IP not confirmed within 120 seconds; inspect raw vm_ip_queries.jsonl")
++
+ 
+     def save_state(self, path_to_vm: str, snapshot_name: str):
+         logger.info("Saving VMware VM state...")

@@ -1,0 +1,34 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright 2026 AItonomy
+
+This license applies to the benchmark data of Science's Last Exam, including
+`tasks/`, `selected_tasks/`, `releases/`, and the task content distributed in
+the Hugging Face datasets Gen-Verse/Science-Last-Exam, Gen-Verse/Science-Last-Exam-data
+and Gen-Verse/Science-Last-Exam-reference (instructions, task inputs, reference
+materials, graders' reference data and task metadata).
+
+You are free to:
+
+- **Share** — copy and redistribute the material in any medium or format
+- **Adapt** — remix, transform, and build upon the material for any purpose,
+  even commercially
+
+Under the following terms:
+
+- **Attribution** — You must give appropriate credit, provide a link to the
+  license, and indicate if changes were made. You may do so in any reasonable
+  manner, but not in any way that suggests the licensor endorses you or your
+  use.
+
+No additional restrictions — You may not apply legal terms or technological
+measures that legally restrict others from doing anything the license permits.
+
+Third-party material included in tasks remains under its own license: the
+upstream scientific code archives of Scientific Computing tasks (license recorded
+in each task's `task.toml`), clotFoam_sD and the other sources of the End-to-End
+Science task (recorded in its `environment/app/sources/manifest.json` and vendor
+license files), and published models and data used by Scientific Software
+Operation tasks (recorded in those tasks' provenance and SOURCE files).
+
+Full legal text: https://creativecommons.org/licenses/by/4.0/legalcode

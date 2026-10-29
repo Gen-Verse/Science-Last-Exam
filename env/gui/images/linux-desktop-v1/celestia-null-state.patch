@@ -1,0 +1,47 @@
+--- a/src/celestia/celestiacore.cpp
++++ b/src/celestia/celestiacore.cpp
+@@ -3389,7 +3389,7 @@
+         AstroCatalog::IndexNumber solIndex = starDB->findCatalogNumberByName(name, false);
+         star = universe->getStarCatalog()->find(solIndex);
+         if (star == nullptr) {
+-            return "null"_json;
++            return "null";
+         }
+         sel = Selection(star);
+         radius = star->getRadius();
+@@ -3402,7 +3402,7 @@
+         Star* sol = universe->getStarCatalog()->find(solIndex);
+         body = universe->getSolarSystem(sol)->getPlanets()->find(name, true);
+         if (body == nullptr) {
+-            return nullptr;
++            return "null";
+         }
+         sel = Selection(body);
+         radius = body->getRadius();
+@@ -3412,7 +3412,7 @@
+     case SelectionType::DeepSky: {
+         dso = universe->getDSOCatalog()->find(name, false);
+         if (dso == nullptr) {
+-            return nullptr;
++            return "null";
+         }
+         sel = Selection(dso);
+         radius = dso->getRadius();
+@@ -3420,7 +3420,7 @@
+     }
+ 
+     default: {
+-        return nullptr;
++        return "null";
+     }
+     }
+ 
+@@ -3451,7 +3451,7 @@
+     }
+ 
+     default: {
+-        return nullptr;
++        return "null";
+     }
+     }
+ 

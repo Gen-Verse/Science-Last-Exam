@@ -1,0 +1,45 @@
+--- a/src/celestia/qt/qtmain.cpp
++++ b/src/celestia/qt/qtmain.cpp
+@@ -42,6 +42,12 @@
+ #include "qtcommandline.h"
+ #include "qtgettext.h"
+ 
++#include <exception>
++#include <stdexcept>
++#include <QCoreApplication>
++#include <QMetaObject>
++#include <QThread>
++
+ #include "http_message.h"
+ #include "http_server.h"
+ 
+@@ -70,7 +76,28 @@
+     try {
+         HttpResponse response(HttpStatusCode::Ok);
+         response.SetHeader("Content-Type", "application/json");
+-        response.SetContent(appCore->getStatus(query));
++        // CelestiaCore and its renderer belong to the Qt GUI thread. HTTP
++        // worker threads must not traverse their state while UI events mutate it.
++        std::string content;
++        std::exception_ptr error;
++        auto collect = [&]() {
++            try {
++                content = appCore->getStatus(query);
++            } catch (...) {
++                error = std::current_exception();
++            }
++        };
++        auto *application = QCoreApplication::instance();
++        if (!application)
++            throw std::runtime_error("Qt application is not ready");
++        if (QThread::currentThread() == application->thread()) {
++            collect();
++        } else if (!QMetaObject::invokeMethod(application, collect, Qt::BlockingQueuedConnection)) {
++            throw std::runtime_error("Could not collect Celestia state on the GUI thread");
++        }
++        if (error)
++            std::rethrow_exception(error);
++        response.SetContent(content);
+         return response;
+     } catch (...) {
+         HttpResponse response(HttpStatusCode::BadRequest);
