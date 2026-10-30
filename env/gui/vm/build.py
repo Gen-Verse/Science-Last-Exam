@@ -16,7 +16,7 @@ import urllib.request
 import zipfile
 from xml.sax.saxutils import escape
 
-ROOT = Path(os.environ.get('SCIENTIFIC_GUI_ROOT', Path(__file__).resolve().parents[3]/'harness/components/scientific_gui'))
+ROOT = Path(os.environ.get('SCIENTIFIC_SOFTWARE_OPERATION_ROOT', Path(__file__).resolve().parents[3]/'harness/components/scientific_software_operation'))
 RECIPES = Path(__file__).resolve().parent
 PROFILES = {"linux": "linux-desktop-v1", "windows": "windows-materials-v1"}
 PROFILE_ASSETS = {
@@ -131,12 +131,12 @@ def payload(directory, config, assets, token, platform):
     archive = directory.parent / ("payload.tar.gz" if platform == "linux" else "payload.zip")
     if platform == "linux":
         with tarfile.open(archive, "w:gz") as output:
-            output.add(directory, arcname="scientific-gui")
+            output.add(directory, arcname="scientific-software-operation")
     else:
         with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as output:
             for path in directory.rglob("*"):
                 if path.is_file():
-                    output.write(path, str(Path("scientific-gui") / path.relative_to(directory)))
+                    output.write(path, str(Path("scientific-software-operation") / path.relative_to(directory)))
     return archive
 
 
@@ -157,9 +157,9 @@ def main(argv=None):
     if args.check:
         print("Configuration is complete; no assets downloaded or VM started.")
         return 0
-    accelerator = os.environ.get("SCIENTIFIC_GUI_ACCELERATOR", "tcg")
+    accelerator = os.environ.get("SCIENTIFIC_SOFTWARE_OPERATION_ACCELERATOR", "tcg")
     if accelerator not in {"tcg", "kvm"}:
-        parser.error("SCIENTIFIC_GUI_ACCELERATOR must be tcg or kvm")
+        parser.error("SCIENTIFIC_SOFTWARE_OPERATION_ACCELERATOR must be tcg or kvm")
     if accelerator == "kvm" and not os.access("/dev/kvm", os.R_OK | os.W_OK):
         parser.error("KVM device unavailable")
     token = os.environ.get("GUI_BRIDGE_TOKEN", "")
@@ -180,7 +180,7 @@ def main(argv=None):
     assets = {name: acquire(asset, args.cache) for name, asset in config["assets"].items()}
     password = "Aa1" + secrets.token_hex(16)
     # Keep all temporary installer media, credentials and firmware in a private directory.
-    with tempfile.TemporaryDirectory(prefix="scientific-gui-build-", dir=args.output) as temporary:
+    with tempfile.TemporaryDirectory(prefix="scientific-software-operation-build-", dir=args.output) as temporary:
         work = Path(temporary)
         bundle = payload(work / "payload", config, assets, token, args.platform)
         output = work / "artifact"
@@ -189,7 +189,7 @@ def main(argv=None):
             "accelerator": accelerator, "build_password": password}
         tpm = None
         tpm_log = None
-        with tempfile.TemporaryDirectory(prefix="scientific-gui-build-control-") as control:
+        with tempfile.TemporaryDirectory(prefix="scientific-software-operation-build-control-") as control:
             try:
                 if args.platform == "linux":
                     variables['profile_name'] = profile

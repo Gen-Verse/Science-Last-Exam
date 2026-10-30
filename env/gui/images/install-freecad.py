@@ -43,9 +43,9 @@ def main():
     a.bin_dir.mkdir(parents=True, exist_ok=True)
     wrapper = a.bin_dir / a.launcher_name
     wrapper.write_text("#!/bin/sh\nunset QT_PLUGIN_PATH QML2_IMPORT_PATH LD_LIBRARY_PATH PYTHONPATH PYTHONHOME\n" +
-                       'export XDG_CONFIG_HOME="$HOME/.config/scientific-gui/' + a.launcher_name + '"\n' +
-                       'export XDG_DATA_HOME="$HOME/.local/share/scientific-gui/' + a.launcher_name + '"\n' +
-                       'export XDG_CACHE_HOME="$HOME/.cache/scientific-gui/' + a.launcher_name + '"\n' +
+                       'export XDG_CONFIG_HOME="$HOME/.config/scientific-software-operation/' + a.launcher_name + '"\n' +
+                       'export XDG_DATA_HOME="$HOME/.local/share/scientific-software-operation/' + a.launcher_name + '"\n' +
+                       'export XDG_CACHE_HOME="$HOME/.cache/scientific-software-operation/' + a.launcher_name + '"\n' +
                        'export FREECAD_USER_HOME="$XDG_CONFIG_HOME/FreeCAD"\n' +
                        'export FREECAD_USER_DATA="$XDG_DATA_HOME/FreeCAD"\n' +
                        'export FREECAD_USER_TEMP="$XDG_CACHE_HOME/FreeCAD"\n' +

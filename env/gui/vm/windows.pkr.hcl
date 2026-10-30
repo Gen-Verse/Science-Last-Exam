@@ -76,12 +76,12 @@ build {
   sources = ["source.qemu.windows"]
   provisioner "file" {
     source      = var.bundle_path
-    destination = "C:/Windows/Temp/scientific-gui.zip"
+    destination = "C:/Windows/Temp/scientific-software-operation.zip"
   }
   provisioner "powershell" {
     inline = [
-      "Expand-Archive -Path C:/Windows/Temp/scientific-gui.zip -DestinationPath C:/scientific-gui-build",
-      "& C:/scientific-gui-build/scientific-gui/scripts/windows.ps1"
+      "Expand-Archive -Path C:/Windows/Temp/scientific-software-operation.zip -DestinationPath C:/scientific-software-operation-build",
+      "& C:/scientific-software-operation-build/scientific-software-operation/scripts/windows.ps1"
     ]
   }
   provisioner "windows-restart" {
@@ -89,9 +89,9 @@ build {
   }
   provisioner "powershell" {
     inline = [
-      "& C:/scientific-gui-build/scientific-gui/scripts/windows-check.ps1",
-      "Remove-Item -Recurse -Force C:/scientific-gui-build",
-      "Remove-Item -Force C:/Windows/Temp/scientific-gui.zip"
+      "& C:/scientific-software-operation-build/scientific-software-operation/scripts/windows-check.ps1",
+      "Remove-Item -Recurse -Force C:/scientific-software-operation-build",
+      "Remove-Item -Force C:/Windows/Temp/scientific-software-operation.zip"
     ]
   }
 }

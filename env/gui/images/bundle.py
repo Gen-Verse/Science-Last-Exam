@@ -20,7 +20,7 @@ def main():
             relative = path.relative_to(root)
             if any(part.startswith(".") or part == "__pycache__" for part in relative.parts):
                 continue
-            archive.add(path, arcname=str(Path("scientific-gui/harness") / relative), recursive=False)
+            archive.add(path, arcname=str(Path("scientific-software-operation/harness") / relative), recursive=False)
     print(args.output.resolve())
 
 

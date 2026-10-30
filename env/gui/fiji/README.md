@@ -5,7 +5,7 @@
 `install.py` 校验外层归档 SHA-256，以及安装清单中每个文件的 SHA-256；
 不调用在线 updater，也不把 Windows 安装包标成 Linux 验收。
 
-归档根目录包含 `scientific-gui-manifest.json`：
+归档根目录包含 `scientific-software-operation-manifest.json`：
 
 ```json
 {

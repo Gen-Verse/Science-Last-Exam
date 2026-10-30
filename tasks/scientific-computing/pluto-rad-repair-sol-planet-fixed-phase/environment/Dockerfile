@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates curl python3 \
  && rm -rf /var/lib/apt/lists/*
 
-# Official tarball, checksum-pinned (same pin as the SCIENTIFIC_CODING leaf this env
+# Official tarball, checksum-pinned (same pin as the SCIENTIFIC_COMPUTING leaf this env
 # inherits: target/cpu-docker.json).
 ARG PLUTO_URL=https://plutocode.ph.unito.it/Downloads/pluto-4.4-patch4.tar.gz
 ARG PLUTO_SHA256=1ba5527b76d49fdd78ae24dbfbdad085ec83393748f1e618516a9d63bd945787

@@ -1,5 +1,5 @@
 $ErrorActionPreference = 'Stop'
-$root = 'C:\scientific-gui-build\scientific-gui'
+$root = 'C:\scientific-software-operation-build\scientific-software-operation'
 Set-Location $root
 $settings = Get-Content "$root\settings.json" -Raw | ConvertFrom-Json
 function AssetPath($name) { Join-Path "$root\installers" $settings.assets.$name.filename }

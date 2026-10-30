@@ -11,8 +11,8 @@ ROOT = Path(__file__).resolve().parent
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--install-root", type=Path, default=Path("/opt/scientific-gui"))
-    parser.add_argument("--launcher", type=Path, default=Path("/usr/local/bin/scientific-gui-slicer"))
+    parser.add_argument("--install-root", type=Path, default=Path("/opt/scientific-software-operation"))
+    parser.add_argument("--launcher", type=Path, default=Path("/usr/local/bin/scientific-software-operation-slicer"))
     args = parser.parse_args()
     args.install_root.mkdir(parents=True, exist_ok=True)
     helper = args.install_root / "slicer_bridge.py"

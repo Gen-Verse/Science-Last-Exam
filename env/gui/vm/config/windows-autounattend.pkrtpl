@@ -23,7 +23,7 @@
         <InstallFrom><MetaData wcm:action="add"><Key>/IMAGE/NAME</Key><Value>${image_name}</Value></MetaData></InstallFrom>
         <InstallTo><DiskID>0</DiskID><PartitionID>3</PartitionID></InstallTo><WillShowUI>OnError</WillShowUI>
       </OSImage></ImageInstall>
-      <UserData><AcceptEula>true</AcceptEula><FullName>Scientific GUI</FullName><Organization>Research</Organization></UserData>
+      <UserData><AcceptEula>true</AcceptEula><FullName>Scientific Software Operation</FullName><Organization>Research</Organization></UserData>
     </component>
   </settings>
   <settings pass="specialize">

@@ -21,14 +21,14 @@ def checksum(path):
 
 def verify(folder):
     folder = Path(folder).resolve()
-    manifest = json.loads((folder / "scientific-gui-manifest.json").read_text())
+    manifest = json.loads((folder / "scientific-software-operation-manifest.json").read_text())
     if manifest["components"] != COMPONENTS:
         raise ValueError("Fiji component versions differ from the declared task environment")
     files = manifest["files"]
     if not isinstance(files, dict) or not files:
         raise ValueError("Bundle manifest must hash every installed file")
     actual = {str(p.relative_to(folder)) for p in folder.rglob("*")
-              if p.is_file() and p.relative_to(folder).as_posix() != "scientific-gui-manifest.json"}
+              if p.is_file() and p.relative_to(folder).as_posix() != "scientific-software-operation-manifest.json"}
     if actual != set(files):
         raise ValueError("Bundle file inventory differs from its manifest")
     for relative, digest in files.items():
