@@ -16,11 +16,11 @@ Led by **AItonomy**
 
 <br/>
 
-<img src="docs/media/figure1.webp" alt="Science's Last Exam: the research loop between laboratory and computer, its single capabilities, and end-to-end research across nine disciplines" width="100%" />
-
-[![Watch the Science's Last Exam demo](docs/media/demo-poster.jpg)](https://sciences-last-exam.org/#film)
+<picture><img src="docs/media/figure1.webp" alt="Science's Last Exam: the research loop between laboratory and computer, its single capabilities, and end-to-end research across nine disciplines" width="100%" /></picture>
 
 </div>
+
+https://github.com/user-attachments/assets/5ac10f14-3386-4137-9168-80c9728717e0
 
 ---
 
