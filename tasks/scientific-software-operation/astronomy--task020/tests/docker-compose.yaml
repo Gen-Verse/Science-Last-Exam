@@ -1,0 +1,9 @@
+services:
+  main:
+    build: .
+    command: ["sleep", "infinity"]
+    networks: [control]
+networks:
+  control:
+    external: true
+    name: ${SCIENTIFIC_SOFTWARE_OPERATION_CONTROL_NETWORK:-scientific-software-operation-control}
