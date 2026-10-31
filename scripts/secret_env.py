@@ -3,8 +3,8 @@ import os
 from pathlib import Path
 
 
-def load_secret_env(root):
-    path = Path(root) / 'secret/.env'
+def load_secret_env(root, path=None):
+    path = Path(path) if path is not None else Path(root) / 'secret/.env'
     if not path.is_file():
         return []
     loaded = []

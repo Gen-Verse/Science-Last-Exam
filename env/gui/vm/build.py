@@ -148,6 +148,7 @@ def main(argv=None):
     parser.add_argument("--output", type=Path, default=Path("/images"))
     parser.add_argument("--cache", type=Path, default=Path("/cache/assets"))
     parser.add_argument("--check", action="store_true", help="Validate configuration only; no downloads or VM launch")
+    parser.add_argument("--if-missing", action="store_true", help="Reuse an existing disk only when its receipt and hashes match this configuration")
     args = parser.parse_args(argv)
     config = json.loads(args.config.read_text())
     if args.profile: config['profile']=args.profile
@@ -174,6 +175,14 @@ def main(argv=None):
     targets = [final, args.output / (profile + ".build.json")]
     if args.platform == "windows":
         targets += [args.output / (profile + ".vars.fd"), args.output / (profile + ".tpm")]
+    if args.if_missing and all(path.exists() for path in targets):
+        receipt = json.loads(targets[1].read_text())
+        expected_assets = {name: data['sha256'] for name, data in config['assets'].items()}
+        if (receipt['sha256'] != digest(final) or receipt['iso_sha256'] != config['iso']['sha256']
+                or receipt['asset_sha256'] != expected_assets):
+            parser.error("Existing image does not match its receipt or the requested configuration; use a new image directory")
+        print("Verified existing image: " + str(final))
+        return 0
     if any(path.exists() for path in targets):
         parser.error("Output already exists; use a new image directory")
     iso = acquire(config["iso"], args.cache)

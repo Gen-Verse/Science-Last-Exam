@@ -14,6 +14,7 @@ import shutil
 import time
 
 from secret_env import load_secret_env
+from task_selection import select_tasks, members_for_tasks
 
 ROOT = Path(__file__).resolve().parents[1]
 RELEASE = ROOT / 'releases/v1'
@@ -31,13 +32,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--only', choices=('data', 'reference'), help='Fetch one dataset; default: both')
     parser.add_argument('--revision', help='Dataset revision (branch, tag or commit); default: main')
+    parser.add_argument('--tasks', type=Path, help='Fetch only resources needed by this task list')
     args = parser.parse_args()
     load_secret_env(ROOT)
     import httpx
     from huggingface_hub import snapshot_download
     from huggingface_hub.errors import GatedRepoError, HfHubHTTPError, RepositoryNotFoundError
     release = json.loads((RELEASE / 'release.json').read_text())
-    members = [json.loads(line) for line in (RELEASE / release['manifest']).read_text().splitlines() if line.strip()]
+    members = members_for_tasks(select_tasks(args.tasks))
     for kind in ('data', 'reference'):
         if args.only and args.only != kind:
             continue
@@ -51,7 +53,7 @@ def main():
         for attempt in range(1, ATTEMPTS + 1):
             try:
                 snapshot = Path(snapshot_download(repo, repo_type='dataset', revision=args.revision,
-                                                  allow_patterns=['tasks/**', 'harness/**']))
+                                                  allow_patterns=[m['path'] for m in missing]))
                 break
             except (GatedRepoError, RepositoryNotFoundError) as exc:
                 raise SystemExit(f'Cannot read {repo}. Request access at https://huggingface.co/datasets/{repo}, '
