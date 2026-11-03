@@ -1,6 +1,6 @@
 {
   "version": "v1",
-  "tasks": 91,
+  "tasks": 96,
   "datasets": {
     "metadata": "Gen-Verse/Science-Last-Exam",
     "data": "Gen-Verse/Science-Last-Exam-data",
