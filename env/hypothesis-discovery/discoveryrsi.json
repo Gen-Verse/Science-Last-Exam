@@ -1,0 +1,9 @@
+{
+  "repository": "https://github.com/Gen-Verse/DiscoveryRSI.git",
+  "commit": "d9a3dfe138a87706ac4850e1fcc6b2d5b0ec3353",
+  "package": "discovery-rsi",
+  "package_version": "0.1.0",
+  "checkout": "env/.discoveryrsi",
+  "venv": "env/.venv-discoveryrsi",
+  "roles": "plugins/discovery-rsi/roles"
+}
