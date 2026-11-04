@@ -1,2 +1,2 @@
-# End-to-End Science (separate progress rubric).
+# End-to-end research (To be expanded); progress rubric is a diagnostic output.
 thrombosis-adhesion-platelet

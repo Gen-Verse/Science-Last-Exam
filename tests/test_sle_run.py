@@ -47,7 +47,7 @@ class ExperimentTests(unittest.TestCase):
         self.assertTrue(any(c.endswith('hypothesis_discovery.py setup') for c in commands))
         self.assertTrue(any('hypothesis_discovery.py fetch' in c for c in commands))
 
-    def test_full_list_is_the_four_capability_assessments(self):
+    def test_full_list_retains_its_native_runtime_selection(self):
         self.assertEqual(len(select_tasks(runner.ROOT / 'selected_tasks/full.txt')), 107)
 
     def test_end_to_end_only_does_not_require_native_agent_profile(self):
