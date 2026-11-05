@@ -206,6 +206,21 @@ redistributed in these datasets. See the [data-access guide](docs/HYPOTHESIS_DIS
 
 ---
 
+## Citation
+
+If you use Science's Last Exam (SLE) in your research, please cite:
+
+```bibtex
+@misc{aitonomy2026sle,
+  title  = {Science's Last Exam},
+  author = {{SLE Team}},
+  year   = {2026},
+  url    = {https://sciences-last-exam.org/}
+}
+```
+
+---
+
 ## License
 
 | Component | License | Scope |
