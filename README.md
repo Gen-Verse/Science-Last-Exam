@@ -208,7 +208,7 @@ redistributed in these datasets. See the [data-access guide](docs/HYPOTHESIS_DIS
 
 ## Citation
 
-If you use Science's Last Exam (SLE) in your research, please cite:
+If you find this work useful in your research, please cite:
 
 ```bibtex
 @misc{aitonomy2026sle,
