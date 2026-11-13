@@ -2,8 +2,6 @@ name: publish-scientific-computing
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ci/publish-images]
 
 permissions:
   contents: read
