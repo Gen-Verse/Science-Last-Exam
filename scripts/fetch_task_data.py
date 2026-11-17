@@ -32,7 +32,8 @@ def intact(path, member):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--only', choices=('data', 'reference'), help='Fetch one dataset; default: both')
-    parser.add_argument('--revision', help='Dataset revision (branch, tag or commit); default: main')
+    parser.add_argument('--revision', help='Override the pinned dataset commit for this run '
+                                           '(default: releases/v1/release.json)')
     parser.add_argument('--tasks', type=Path, help='Fetch only resources needed by this task list')
     args = parser.parse_args()
     load_secret_env(ROOT)
@@ -47,13 +48,14 @@ def main():
         wanted = [m for m in members if m['dataset'] == kind]
         missing = [m for m in wanted if not intact(ROOT / m['path'], m)]
         repo = release['datasets'][kind]
+        revision = args.revision or release['revisions'][kind]
         if not missing:
             print(f'{kind}: all {len(wanted)} files present ({repo})')
             continue
-        print(f'{kind}: fetching {len(missing)} of {len(wanted)} files from {repo}', flush=True)
+        print(f'{kind}: fetching {len(missing)} of {len(wanted)} files from {repo} at {revision[:12]}', flush=True)
         for attempt in range(1, ATTEMPTS + 1):
             try:
-                snapshot = Path(snapshot_download(repo, repo_type='dataset', revision=args.revision,
+                snapshot = Path(snapshot_download(repo, repo_type='dataset', revision=revision,
                                                   allow_patterns=[m['path'] for m in missing]))
                 break
             except (GatedRepoError, RepositoryNotFoundError) as exc:
