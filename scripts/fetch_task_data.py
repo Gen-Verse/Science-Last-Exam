@@ -9,6 +9,7 @@ present and intact are kept.
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import time
@@ -31,7 +32,8 @@ def intact(path, member):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--only', choices=('data', 'reference'), help='Fetch one dataset; default: both')
-    parser.add_argument('--revision', help='Dataset revision (branch, tag or commit); default: main')
+    parser.add_argument('--revision', help='Override the pinned dataset commit for this run '
+                                           '(default: releases/v1/release.json)')
     parser.add_argument('--tasks', type=Path, help='Fetch only resources needed by this task list')
     args = parser.parse_args()
     load_secret_env(ROOT)
@@ -46,13 +48,14 @@ def main():
         wanted = [m for m in members if m['dataset'] == kind]
         missing = [m for m in wanted if not intact(ROOT / m['path'], m)]
         repo = release['datasets'][kind]
+        revision = args.revision or release['revisions'][kind]
         if not missing:
             print(f'{kind}: all {len(wanted)} files present ({repo})')
             continue
-        print(f'{kind}: fetching {len(missing)} of {len(wanted)} files from {repo}', flush=True)
+        print(f'{kind}: fetching {len(missing)} of {len(wanted)} files from {repo} at {revision[:12]}', flush=True)
         for attempt in range(1, ATTEMPTS + 1):
             try:
-                snapshot = Path(snapshot_download(repo, repo_type='dataset', revision=args.revision,
+                snapshot = Path(snapshot_download(repo, repo_type='dataset', revision=revision,
                                                   allow_patterns=[m['path'] for m in missing]))
                 break
             except (GatedRepoError, RepositoryNotFoundError) as exc:
@@ -65,12 +68,23 @@ def main():
                                      'Run the script again; downloaded files are kept.')
                 print(f'{kind}: attempt {attempt} interrupted ({type(exc).__name__}); retrying', flush=True)
                 time.sleep(5 * attempt)
+        written = {}
         for member in missing:
             source, target = snapshot / member['path'], ROOT / member['path']
             if not intact(source, member):
                 raise SystemExit(f'{member["path"]} in {repo} does not match the manifest; use the matching revision.')
             target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(source, target)
+            first = written.get(member['sha256'])
+            if first is not None and first.exists():
+                # Shared recordings and archives are stored once per dataset but need one
+                # path per task. Link the copies instead of duplicating gigabytes on disk.
+                try:
+                    os.link(first, target)
+                except OSError:
+                    shutil.copyfile(first, target)
+            else:
+                shutil.copyfile(source, target)
+                written[member['sha256']] = target
             if member.get('executable'):
                 target.chmod(0o755)
         print(f'{kind}: {len(missing)} files written and verified')

@@ -99,4 +99,8 @@ def install(application):
 
 
 if __name__=='__main__':
-    for application in ('jasp','paraview','slicer','copasi','vesta','fiji'):install(application)
+    # Only install what the profile declares; ChimeraX, ParaView and Fiji are
+    # absent from the SLE subset and must not fail the build.
+    for application in ('jasp','paraview','slicer','copasi','vesta','fiji'):
+        if application in SETTINGS['assets']:
+            install(application)
