@@ -9,6 +9,7 @@ present and intact are kept.
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import time
@@ -65,12 +66,23 @@ def main():
                                      'Run the script again; downloaded files are kept.')
                 print(f'{kind}: attempt {attempt} interrupted ({type(exc).__name__}); retrying', flush=True)
                 time.sleep(5 * attempt)
+        written = {}
         for member in missing:
             source, target = snapshot / member['path'], ROOT / member['path']
             if not intact(source, member):
                 raise SystemExit(f'{member["path"]} in {repo} does not match the manifest; use the matching revision.')
             target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(source, target)
+            first = written.get(member['sha256'])
+            if first is not None and first.exists():
+                # Shared recordings and archives are stored once per dataset but need one
+                # path per task. Link the copies instead of duplicating gigabytes on disk.
+                try:
+                    os.link(first, target)
+                except OSError:
+                    shutil.copyfile(first, target)
+            else:
+                shutil.copyfile(source, target)
+                written[member['sha256']] = target
             if member.get('executable'):
                 target.chmod(0o755)
         print(f'{kind}: {len(missing)} files written and verified')
